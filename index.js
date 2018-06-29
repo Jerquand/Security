@@ -13,6 +13,8 @@ const router = express.Router();
 app.use(bodyParser.json())
 
 // connect to db
+const db = new sqlite3.Database('./Chinook_Sqlite_AutoIncrementPKs.sqlite');
+
 sequelize = new Sequelize('Music', 'jerquan', null, {
     host: 'localhost',
     dialect: 'sqlite',
@@ -77,9 +79,9 @@ function express (app, option) {
       passport.use(
         new FacebookStrategy(
           {
-            clientId: 1698333690263156
-            clientSecret: 29c6e83dcb6bf29415ba68a4b2bd8a9c
-            callbackURL: 'http://localhost:3000/auth/facebook/callback'
+            clientId: '1698333690263156',
+            clientSecret: '29c6e83dcb6bf29415ba68a4b2bd8a9c',
+            callbackURL: 'http://localhost:3000/auth/facebook/callback',
           },
           function(accessToken, refreshToken, profile, done) {
             const authId = "facebook:" + profile.id;
@@ -123,6 +125,30 @@ function express (app, option) {
     }
   };
 };
+window.fbAsyncInit = function() {
+  FB.init({
+    appId      : '{your-app-id}',
+    cookie     : true,
+    xfbml      : true,
+    version    : '{api-version}'
+  });
+    
+  FB.AppEvents.logPageView();   
+    
+};
+function checkLoginState() {
+  FB.getLoginStatus(function(response) {
+    statusChangeCallback(response);
+  });
+}
+
+(function(d, s, id){
+   var js, fjs = d.getElementsByTagName(s)[0];
+   if (d.getElementById(id)) {return;}
+   js = d.createElement(s); js.id = id;
+   js.src = "https://connect.facebook.net/en_US/sdk.js";
+   fjs.parentNode.insertBefore(js, fjs);
+ }(document, 'script', 'facebook-jssdk'));
 app.get('/account', (req, res) => {
   if (!req.session.passport.user) return res.redirect(303, '/unauthorized');
   res.render('account');
@@ -143,6 +169,12 @@ app.get('auth/facebook/callback', passport.authenticate('facebook', {successRedi
 
 app.listen(3000,() => {
   console.log('Running')
+});
+router.get('/', (req, res) => {
+  res.send()
+
 })
-module.exports = Router;
+db.close();
+
+module.exports = router;
 module.exports = Artist;
